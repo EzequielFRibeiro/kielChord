@@ -44,6 +44,8 @@ export default function HomePage() {
     if (!audioBuffer) return
     stopPlayback()
 
+    if (typeof window === 'undefined' || !window.AudioContext) return
+
     if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
       audioCtxRef.current = new AudioContext()
     }

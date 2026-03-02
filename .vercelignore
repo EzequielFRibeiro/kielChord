@@ -1,0 +1,9 @@
+# Arquivos e pastas que não precisam ser enviados ao Vercel
+node_modules
+.next
+.git
+.gitignore
+README.md
+*.log
+.DS_Store
+.env*.local

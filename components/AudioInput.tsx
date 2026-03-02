@@ -31,6 +31,9 @@ export default function AudioInput({ onAudioLoaded, isAnalyzing }: AudioInputPro
 
     try {
       const arrayBuffer = await file.arrayBuffer()
+      if (typeof window === 'undefined' || !window.AudioContext) {
+        throw new Error('AudioContext not available')
+      }
       const audioCtx = new AudioContext()
       const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer)
       onAudioLoaded(audioBuffer, file.name)
@@ -86,6 +89,9 @@ export default function AudioInput({ onAudioLoaded, isAnalyzing }: AudioInputPro
       const res = await fetch(urlInput)
       if (!res.ok) throw new Error('Failed to fetch audio')
       const arrayBuffer = await res.arrayBuffer()
+      if (typeof window === 'undefined' || !window.AudioContext) {
+        throw new Error('AudioContext not available')
+      }
       const audioCtx = new AudioContext()
       const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer)
       onAudioLoaded(audioBuffer, urlInput, urlInput)
@@ -98,6 +104,9 @@ export default function AudioInput({ onAudioLoaded, isAnalyzing }: AudioInputPro
 
   const startMicRecording = async () => {
     try {
+      if (typeof window === 'undefined' || !navigator.mediaDevices) {
+        throw new Error('MediaDevices not available')
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const mediaRecorder = new MediaRecorder(stream)
       mediaRecorderRef.current = mediaRecorder
@@ -111,6 +120,10 @@ export default function AudioInput({ onAudioLoaded, isAnalyzing }: AudioInputPro
       mediaRecorder.onstop = async () => {
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
         const arrayBuffer = await blob.arrayBuffer()
+        if (typeof window === 'undefined' || !window.AudioContext) {
+          setLoadError('AudioContext not available')
+          return
+        }
         const audioCtx = new AudioContext()
         try {
           const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer)
